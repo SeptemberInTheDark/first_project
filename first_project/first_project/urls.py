@@ -17,6 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from app.views import index, get_omlet, get_pasta
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', index),
+    path('omlet/', get_omlet),
+    path('pasta/', get_pasta),
 ]
