@@ -1,5 +1,6 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+
+from .models import Phone
 
 DATA = {
     'omlet': {
@@ -19,15 +20,7 @@ DATA = {
     },
 }
 
-# Напишите ваш обработчик. Используйте DATA как источник данных
-# Результат - render(request, 'calculator/index.html', context)
-# В качестве контекста должен быть передан словарь с рецептом:
-# context = {
-#   'recipe': {
-#     'ингредиент1': количество1,
-#     'ингредиент2': количество2,
-#   }
-# }
+
 def index(request):
     return render(request, 'index.html')
 
@@ -38,3 +31,22 @@ def get_omlet(request):
 def get_pasta(request):
     context = {'recipe': DATA.get('pasta')}
     return render(request, 'pasta.html', context)
+
+
+def catalog(request):
+    sort = request.GET.get('sort')
+    phones = Phone.objects.all()
+
+    if sort == 'name':
+        phones = phones.order_by('name')
+    elif sort == 'min_price':
+        phones = phones.order_by('price')
+    elif sort == 'max_price':
+        phones = phones.order_by('-price')
+
+    return render(request, 'catalog.html', {'phones': phones})
+
+
+def phone(request, slug):
+    phone_obj = get_object_or_404(Phone, slug=slug)
+    return render(request, 'product.html', {'phone': phone_obj})
