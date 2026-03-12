@@ -14,10 +14,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
+from app.views import (
+    index,
+    get_omlet,
+    get_pasta,
+    catalog,
+    phone,
+    SensorListCreateView,
+    SensorRetrieveUpdateView,
+    MeasurementCreateView,
+)
 
-from app.views import catalog, get_omlet, get_pasta, index, phone
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +36,9 @@ urlpatterns = [
     path('pasta/', get_pasta),
     path('catalog/', catalog, name='catalog'),
     path('catalog/<slug:slug>/', phone, name='phone'),
+
+     # REST API для датчиков
+    path('api/sensors/', SensorListCreateView.as_view()),
+    path('api/sensors/<int:pk>/', SensorRetrieveUpdateView.as_view()),
+    path('api/measurements/', MeasurementCreateView.as_view()),
 ]

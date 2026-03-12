@@ -1,6 +1,13 @@
 from django.shortcuts import get_object_or_404, render
 
-from .models import Phone
+from .models import Phone, Sensor, Measurement 
+from rest_framework import generics
+from .serializers import (
+    SensorSerializer,
+    SensorDetailSerializer,
+    MeasurementSerializer,
+)
+
 
 DATA = {
     'omlet': {
@@ -50,3 +57,36 @@ def catalog(request):
 def phone(request, slug):
     phone_obj = get_object_or_404(Phone, slug=slug)
     return render(request, 'product.html', {'phone': phone_obj})
+
+
+
+class SensorListCreateView(generics.ListCreateAPIView):
+    """
+    GET  /api/sensors/  -> список датчиков
+    POST /api/sensors/  -> создать датчик
+    """
+    queryset = Sensor.objects.all()
+    serializer_class = SensorSerializer
+
+
+class SensorRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    """
+    GET   /api/sensors/<id>/ -> датчик с измерениями
+    PATCH /api/sensors/<id>/ -> частичное обновление
+    PUT   /api/sensors/<id>/ -> полное обновление
+    """
+    queryset = Sensor.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return SensorDetailSerializer
+        return SensorSerializer
+
+
+class MeasurementCreateView(generics.CreateAPIView):
+    """
+    POST /api/measurements/ -> добавить измерение
+    body: { "sensor": <id>, "temperature": <value> }
+    """
+    queryset = Measurement.objects.all()
+    serializer_class = MeasurementSerializer
