@@ -7,7 +7,7 @@ from .serializers import (
     SensorDetailSerializer,
     MeasurementSerializer,
 )
-
+from app.models import *
 
 DATA = {
     'omlet': {
@@ -90,3 +90,30 @@ class MeasurementCreateView(generics.CreateAPIView):
     """
     queryset = Measurement.objects.all()
     serializer_class = MeasurementSerializer
+
+
+########################################################
+def students_list(request):
+    template = 'school/students_list.html'
+    # используйте этот параметр для упорядочивания результатов
+    # https://docs.djangoproject.com/en/2.2/ref/models/querysets/#django.db.models.query.QuerySet.order_by
+    ordering = 'group'
+    from .models import Student
+    students = Student.objects.all().order_by(ordering, 'name')
+    context = {
+        'object_list': students,
+    }
+    return render(request, template, context)
+
+
+########################################################
+def articles_list(request):
+    template = 'articles/news.html'
+    # используйте этот параметр для упорядочивания результатов
+    # https://docs.djangoproject.com/en/3.1/ref/models/querysets/#django.db.models.query.QuerySet.order_by
+    ordering = '-published_at'
+    articles = Article.objects.all().order_by(ordering).prefetch_related('scopes__tag')
+    context = {
+        'object_list': articles,
+    }
+    return render(request, template, context)

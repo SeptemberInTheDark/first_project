@@ -26,17 +26,20 @@ from app.views import (
     SensorListCreateView,
     SensorRetrieveUpdateView,
     MeasurementCreateView,
+    students_list,
+    articles_list
 )
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index),
+
+    path('', students_list, name='students'),
     path('omlet/', get_omlet),
     path('pasta/', get_pasta),
     path('catalog/', catalog, name='catalog'),
     path('catalog/<slug:slug>/', phone, name='phone'),
-
+    path('articles/', articles_list, name='articles'),
      # REST API для датчиков
     path('api/sensors/', SensorListCreateView.as_view()),
     path('api/sensors/<int:pk>/', SensorRetrieveUpdateView.as_view()),
